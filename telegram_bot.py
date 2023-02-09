@@ -2,7 +2,7 @@ import parsing as p
 import asyncio as a
 from aiogram import Bot, Dispatcher, executor, types
 
-TOKEN = "5604287359:AAFDOzlTlsx9qNplCnJnhme8ljr2K9f5LvI"
+TOKEN = ""
 LIST_OF_GROUPS = ['1121','0921','0922','1221', '1222', '1521', 
 '2321', '0911','0912','1111','1102', '1101', '1191', '1192', 
 '1211', '1212', '1213', '1202', '1201', '1291', '1292', '1511',
