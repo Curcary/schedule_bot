@@ -1,6 +1,5 @@
-import requests as req
+from requests import get
 import pandas as pd
-import asyncio as a
 from time import sleep
 import threading as th
 
@@ -8,12 +7,15 @@ import threading as th
 class parser:
     def check_current_sheet(self):
         while (True):
-            new_content = req.get("https://serp-koll.ru/images/ep/k1/rasp1.xlsx").content
-            new_sheet = pd.ExcelFile(new_content)
-            if (self.content==new_content):
-                self.book = new_sheet
-                a.run(self.update_handler())
-            sleep(5)
+            try:
+                new_content = get("https://serp-koll.ru/images/ep/k1/rasp1.xlsx").content
+                new_sheet = pd.ExcelFile(new_content)
+                if (self.content!=new_content):
+                    self.book = new_sheet
+                    self.update()
+            except Exception:
+                pass
+            sleep(5*60)
 
     def __findcolumn(self, group_number):
         for i in range(2, 27):
@@ -56,9 +58,9 @@ class parser:
         lessons.append(self.book.book.active.title)
         return self.__build_message(lessons=lessons)
     def __init__(self, update_handler) -> None:
-        self.content = req.get("https://serp-koll.ru/images/ep/k1/rasp1.xlsx").content
+        self.content = get("https://serp-koll.ru/images/ep/k1/rasp1.xlsx").content
         self.book = pd.ExcelFile(self.content)
-        self.update_handler = update_handler
+        self.update = update_handler
         th.Thread(target=self.check_current_sheet).start( )
 
 def update():
