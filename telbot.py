@@ -3,7 +3,7 @@ import parsing as p
 import pickle
 from telebot import types
 
-TOKEN = "5604287359:AAFDOzlTlsx9qNplCnJnhme8ljr2K9f5LvI"
+TOKEN = ""
 
 DATAFILE = 'data/user_id.dat'
 
