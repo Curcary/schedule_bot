@@ -3,7 +3,7 @@ import parsing as p
 import pickle
 from telebot import types
 
-TOKEN = ""
+TOKEN = "5604287359:AAFDOzlTlsx9qNplCnJnhme8ljr2K9f5LvI"
 
 DATAFILE = 'data/user_id.dat'
 
@@ -13,6 +13,10 @@ LIST_OF_GROUPS = ['1121','0921','0922','1221', '1222', '1521',
 '1211', '1212', '1213', '1202', '1201', '1291', '1292', '1511',
  '1501', '1591','1581', '2311', '2301', '2391']
 
+
+def send_schedule(id, text):
+    lessons = parser.parse(text)
+    bot.send_message(id, lessons)
 
 def update():
     with open(DATAFILE, 'rb') as file:
@@ -33,16 +37,25 @@ def get_updates(callback):
     if callback.data == 'updates':
         with open(DATAFILE, 'rb') as file:
             chat_ids = pickle.load(file)
-        with open(DATAFILE, 'wb') as file:
             chat_ids.add(callback.message.chat.id)
+        with open(DATAFILE, 'wb') as file:
             pickle.dump(chat_ids, file)
         bot.send_message(callback.message.chat.id, 'Вы будете получать уведомления об обновлении\n')
+        bot.send_message(callback.message.chat.id, 'Чтобы отказаться от обновлений, напишите /отмена\n')
 
 @bot.message_handler(commands=LIST_OF_GROUPS)
 def select_group_handler(message: types.Message):
-    lessons = parser.parse(message.text[1:])
-    bot.send_message(message.from_user.id, lessons)
+    send_schedule(message.from_user.id, message.text[1:])
     
+@bot.message_handler(commands=['отмена'])
+def decline_updates(message: types.Message):
+    with open(DATAFILE, 'rb') as file:
+        chat_ids = pickle.load(file)
+        chat_ids.discard(message.chat.id)
+    with open(DATAFILE, 'wb') as file:
+        pickle.dump(chat_ids, file)
+    bot.send_message(message.chat.id, "Вы отписались от уведомлений")    
+
 @bot.message_handler(commands=['группы'])
 def groups(message: types.Message):
     outmessage = ''
